@@ -11,6 +11,9 @@ body {
   background: $backgroundColor;
   color: $bodyColor;
   font-family: $bodyFont;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5 {
@@ -44,10 +47,6 @@ p {
 a {
   text-decoration: none;
   font-size: 1.125em;
-
-  :visited {
-    color: red;
-  }
 }
 
 li.active a {
@@ -59,12 +58,24 @@ li.active a {
   margin: 0 auto;
 }
 
+.menucontainer {
+  position: sticky;
+  background-color: red;
+  top: 0;
+  height: 4em;
+  margin-top: 3em;
+  background-color: rgba(255,255,255,0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
 ul.menu {
   list-style-type: none;
   overflow: auto;
   float: right;
-  font-weight: medium;
+  font-weight: 500;
   padding: 0;
+  margin: 21px 0;
 
   li {
     float: left;
@@ -72,6 +83,10 @@ ul.menu {
 
     a {
       color: $grayNormal;
+
+      &:hover, &.active:hover {
+        color: $hyperLink;
+      }
     }
 
     a.active {
