@@ -8,8 +8,26 @@ body {
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #fafafa;
 }
 
 #root {
   min-height: 100vh;
+}
+
+/* Productivity-focused styles */
+.task-complete {
+  @apply opacity-60 line-through;
+}
+
+.task-complete .task-title {
+  @apply text-gray-500;
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.productivity-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 } 

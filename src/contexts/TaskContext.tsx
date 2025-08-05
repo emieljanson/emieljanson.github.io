@@ -9,6 +9,7 @@ type TaskAction =
   | { type: 'ADD_TASK'; payload: Task }
   | { type: 'UPDATE_TASK'; payload: { id: string; updates: Partial<Task> } }
   | { type: 'DELETE_TASK'; payload: string }
+  | { type: 'TOGGLE_COMPLETE'; payload: string }
 
 const initialState: TaskState = {
   tasks: [
@@ -63,6 +64,19 @@ const taskReducer = (state: TaskState, action: TaskAction): TaskState => {
         ...state,
         tasks: state.tasks.filter((task) => task.id !== action.payload),
       }
+    case 'TOGGLE_COMPLETE':
+      return {
+        ...state,
+        tasks: state.tasks.map((task) =>
+          task.id === action.payload
+            ? {
+                ...task,
+                status: task.status === 'done' ? 'todo' : 'done',
+                updatedAt: new Date(),
+              }
+            : task
+        ),
+      }
     default:
       return state
   }
@@ -103,6 +117,10 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     dispatch({ type: 'DELETE_TASK', payload: id })
   }
 
+  const toggleComplete = (id: string) => {
+    dispatch({ type: 'TOGGLE_COMPLETE', payload: id })
+  }
+
   const getTasksByStatus = (status: Task['status']) => {
     return state.tasks.filter((task) => task.status === status)
   }
@@ -113,6 +131,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     updateTask,
     deleteTask,
     getTasksByStatus,
+    toggleComplete,
   }
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>
