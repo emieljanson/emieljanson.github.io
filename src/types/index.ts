@@ -15,4 +15,5 @@ export interface TaskContextType {
   updateTask: (id: string, updates: Partial<Task>) => void
   deleteTask: (id: string) => void
   getTasksByStatus: (status: Task['status']) => Task[]
+  toggleComplete: (id: string) => void
 } 
