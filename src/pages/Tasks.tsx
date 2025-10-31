@@ -1,14 +1,18 @@
 import { useState } from 'react'
 import { useTaskContext } from '../contexts/TaskContext'
 import TaskCard from '../components/TaskCard'
+import TaskModal from '../components/TaskModal'
 import { Filter, Plus } from 'lucide-react'
+import { Task } from '../types'
 
 const Tasks: React.FC = () => {
-  const { tasks, deleteTask } = useTaskContext()
+  const { tasks, addTask, updateTask, deleteTask } = useTaskContext()
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [priorityFilter, setPriorityFilter] = useState<string>('all')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingTask, setEditingTask] = useState<Task | undefined>(undefined)
 
-  const filteredTasks = tasks.filter((task) => {
+  const filteredTasks = tasks.filter((task: Task) => {
     const statusMatch = statusFilter === 'all' || task.status === statusFilter
     const priorityMatch = priorityFilter === 'all' || task.priority === priorityFilter
     return statusMatch && priorityMatch
@@ -20,6 +24,31 @@ const Tasks: React.FC = () => {
     }
   }
 
+  const handleEdit = (task: Task) => {
+    setEditingTask(task)
+    setIsModalOpen(true)
+  }
+
+  const handleAddNew = () => {
+    setEditingTask(undefined)
+    setIsModalOpen(true)
+  }
+
+  const handleSaveTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
+    if (editingTask) {
+      updateTask(editingTask.id, taskData)
+    } else {
+      addTask(taskData)
+    }
+    setIsModalOpen(false)
+    setEditingTask(undefined)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setEditingTask(undefined)
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -27,7 +56,10 @@ const Tasks: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-900">Tasks</h2>
           <p className="text-gray-600">Manage your tasks and track progress</p>
         </div>
-        <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+        <button 
+          onClick={handleAddNew}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+        >
           <Plus className="w-4 h-4 mr-2" />
           Add Task
         </button>
@@ -49,7 +81,7 @@ const Tasks: React.FC = () => {
               <select
                 id="status-filter"
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value)}
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md"
               >
                 <option value="all">All Status</option>
@@ -66,7 +98,7 @@ const Tasks: React.FC = () => {
               <select
                 id="priority-filter"
                 value={priorityFilter}
-                onChange={(e) => setPriorityFilter(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPriorityFilter(e.target.value)}
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md"
               >
                 <option value="all">All Priorities</option>
@@ -82,10 +114,11 @@ const Tasks: React.FC = () => {
       {/* Task List */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
         {filteredTasks.length > 0 ? (
-          filteredTasks.map((task) => (
+          filteredTasks.map((task: Task) => (
             <TaskCard
               key={task.id}
               task={task}
+              onEdit={handleEdit}
               onDelete={handleDelete}
             />
           ))
@@ -113,6 +146,13 @@ const Tasks: React.FC = () => {
           </div>
         )}
       </div>
+
+      <TaskModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSaveTask}
+        task={editingTask}
+      />
     </div>
   )
 }
