@@ -2,21 +2,24 @@ import { useState } from 'react'
 import { useTaskContext } from '../contexts/TaskContext'
 import TaskCard from '../components/TaskCard'
 import TaskModal from '../components/TaskModal'
-import { Filter, Plus } from 'lucide-react'
+import { Filter, Plus, X } from 'lucide-react'
 import { Task } from '../types'
+import { useTaskFilters } from '../hooks/useTaskFilters'
+import { TASK_STATUS_OPTIONS, TASK_PRIORITY_OPTIONS } from '../constants/taskConstants'
 
 const Tasks: React.FC = () => {
   const { tasks, addTask, updateTask, deleteTask } = useTaskContext()
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [priorityFilter, setPriorityFilter] = useState<string>('all')
+  const {
+    filteredTasks,
+    statusFilter,
+    priorityFilter,
+    setStatusFilter,
+    setPriorityFilter,
+    hasActiveFilters,
+    clearFilters,
+  } = useTaskFilters(tasks)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined)
-
-  const filteredTasks = tasks.filter((task: Task) => {
-    const statusMatch = statusFilter === 'all' || task.status === statusFilter
-    const priorityMatch = priorityFilter === 'all' || task.priority === priorityFilter
-    return statusMatch && priorityMatch
-  })
 
   const handleDelete = (id: string) => {
     if (confirm('Are you sure you want to delete this task?')) {
@@ -67,47 +70,61 @@ const Tasks: React.FC = () => {
 
       {/* Filters */}
       <div className="bg-white shadow rounded-lg p-6">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <Filter className="w-4 h-4 text-gray-400" />
-            <span className="text-sm font-medium text-gray-700">Filters:</span>
-          </div>
-          
+        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div>
-              <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700">
-                Status
-              </label>
-              <select
-                id="status-filter"
-                value={statusFilter}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md"
-              >
-                <option value="all">All Status</option>
-                <option value="todo">Todo</option>
-                <option value="in-progress">In Progress</option>
-                <option value="done">Done</option>
-              </select>
+            <div className="flex items-center space-x-2">
+              <Filter className="w-4 h-4 text-gray-400" />
+              <span className="text-sm font-medium text-gray-700">Filters:</span>
             </div>
             
-            <div>
-              <label htmlFor="priority-filter" className="block text-sm font-medium text-gray-700">
-                Priority
-              </label>
-              <select
-                id="priority-filter"
-                value={priorityFilter}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPriorityFilter(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md"
-              >
-                <option value="all">All Priorities</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
+            <div className="flex items-center space-x-4">
+              <div>
+                <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700">
+                  Status
+                </label>
+                <select
+                  id="status-filter"
+                  value={statusFilter}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value)}
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md"
+                >
+                  {TASK_STATUS_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label htmlFor="priority-filter" className="block text-sm font-medium text-gray-700">
+                  Priority
+                </label>
+                <select
+                  id="priority-filter"
+                  value={priorityFilter}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPriorityFilter(e.target.value)}
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md"
+                >
+                  {TASK_PRIORITY_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
+          
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            >
+              <X className="w-4 h-4 mr-1" />
+              Clear Filters
+            </button>
+          )}
         </div>
       </div>
 
