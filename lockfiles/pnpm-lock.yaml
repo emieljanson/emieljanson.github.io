@@ -1,10 +1,17 @@
 lockfileVersion: '9.0'
 settings:
   autoInstallPeers: true
+  excludeLinksFromLockfile: false
 dependencies:
   react:
     specifier: ^18.0.0
-    version: 18.2.0
+    version: 18.3.0
+  react-dom:
+    specifier: ^18.0.0
+    version: 18.3.0
   typescript:
     specifier: ^5.0.0
-    version: 5.3.0
+    version: 5.4.0
+  mobx:
+    specifier: ^6.0.0
+    version: 6.12.0
