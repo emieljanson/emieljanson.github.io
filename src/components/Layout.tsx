@@ -1,6 +1,9 @@
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Home, CheckSquare, Plus } from 'lucide-react'
+import TaskModal from './TaskModal'
+import { useTaskContext } from '../contexts/TaskContext'
+import { Task } from '../types'
 
 interface LayoutProps {
   children: ReactNode
@@ -8,11 +11,26 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation()
+  const { addTask } = useTaskContext()
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: Home },
     { path: '/tasks', label: 'Tasks', icon: CheckSquare },
   ]
+
+  const handleAddNew = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleSaveTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
+    addTask(taskData)
+    setIsModalOpen(false)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,7 +43,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 Task Manager
               </h1>
             </div>
-            <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            <button 
+              onClick={handleAddNew}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            >
               <Plus className="w-4 h-4 mr-2" />
               New Task
             </button>
@@ -63,6 +84,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">{children}</div>
       </main>
+
+      <TaskModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSaveTask}
+      />
     </div>
   )
 }
