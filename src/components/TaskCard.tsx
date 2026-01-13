@@ -8,6 +8,14 @@ interface TaskCardProps {
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) => {
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(date)
+  }
+
   const getStatusColor = (status: Task['status']) => {
     switch (status) {
       case 'todo':
@@ -34,14 +42,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) => {
     }
   }
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    }).format(date)
-  }
-
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
@@ -49,6 +49,22 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) => {
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             {task.title}
           </h3>
+          <div className="flex items-center space-x-2 mt-4">
+            <span
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                task.status
+              )}`}
+            >
+              {task.status.replace('-', ' ')}
+            </span>
+            <span
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(
+                task.priority
+              )}`}
+            >
+              {task.priority}
+            </span>
+          </div>
           {task.description && (
             <p className="text-gray-600 text-sm mb-4">{task.description}</p>
           )}
@@ -85,23 +101,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) => {
             </button>
           )}
         </div>
-      </div>
-      
-      <div className="flex items-center space-x-2 mt-4">
-        <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-            task.status
-          )}`}
-        >
-          {task.status.replace('-', ' ')}
-        </span>
-        <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(
-            task.priority
-          )}`}
-        >
-          {task.priority}
-        </span>
       </div>
     </div>
   )
