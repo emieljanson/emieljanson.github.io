@@ -1,5 +1,7 @@
 import { useTaskContext } from '../contexts/TaskContext'
 import { CheckSquare, Clock, AlertCircle, TrendingUp } from 'lucide-react'
+import { getStatusLabel } from '../utils/taskUtils'
+import { Task } from '../types'
 
 const Dashboard: React.FC = () => {
   const { tasks, getTasksByStatus } = useTaskContext()
@@ -88,7 +90,7 @@ const Dashboard: React.FC = () => {
             Recent Tasks
           </h3>
           <div className="space-y-4">
-            {tasks.slice(0, 5).map((task) => (
+            {tasks.slice(0, 5).map((task: Task) => (
               <div
                 key={task.id}
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
@@ -108,7 +110,7 @@ const Dashboard: React.FC = () => {
                       {task.title}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {task.status.replace('-', ' ')} • {task.priority}
+                      {getStatusLabel(task.status)} • {task.priority}
                     </p>
                   </div>
                 </div>

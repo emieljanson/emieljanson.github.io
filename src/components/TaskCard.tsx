@@ -1,5 +1,6 @@
 import { Task } from '../types'
 import { Calendar, Clock, Trash2, Edit } from 'lucide-react'
+import { getStatusColor, getPriorityColor, getStatusLabel, formatDate } from '../utils/taskUtils'
 
 interface TaskCardProps {
   task: Task
@@ -8,39 +9,6 @@ interface TaskCardProps {
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) => {
-  const getStatusColor = (status: Task['status']) => {
-    switch (status) {
-      case 'todo':
-        return 'bg-gray-100 text-gray-800'
-      case 'in-progress':
-        return 'bg-blue-100 text-blue-800'
-      case 'done':
-        return 'bg-green-100 text-green-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getPriorityColor = (priority: Task['priority']) => {
-    switch (priority) {
-      case 'low':
-        return 'bg-green-100 text-green-800'
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'high':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    }).format(date)
-  }
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
@@ -93,7 +61,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete }) => {
             task.status
           )}`}
         >
-          {task.status.replace('-', ' ')}
+          {getStatusLabel(task.status)}
         </span>
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(
