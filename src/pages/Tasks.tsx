@@ -131,7 +131,7 @@ const Tasks: React.FC = () => {
       {/* Task List */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
         {filteredTasks.length > 0 ? (
-          filteredTasks.map((task: Task) => (
+          filteredTasks.map((task) => (
             <TaskCard
               key={task.id}
               task={task}
