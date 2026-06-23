@@ -1,12 +1,91 @@
 <!doctype html>
-<!-- Made in Framer · framer.com ✨ -->
 <!-- Published Jun 7, 2026, 8:52 AM UTC -->
 <html lang="en" data-redirect-timezone="1">
 <head>
 	<meta charset="utf-8">
 	
 	
-	<script>try{localStorage.removeItem("__framer_force_showing_editorbar_since")}catch(e){}</script>
+	<style id="maker-chrome-guard">
+		[aria-label*="Edit content" i],
+		[title*="Edit content" i],
+		a[href*="framer.com/projects" i],
+		a[href*="framer.com/sites" i],
+		a[href*="framer.com/editor" i],
+		[data-framer-editorbar],
+		[data-framer-preview-badge] {
+			display: none !important;
+			pointer-events: none !important;
+			visibility: hidden !important;
+		}
+	</style>
+	<script>
+	(() => {
+		const editorKeys = [
+			"__framer_force_showing_editorbar_since",
+			"framer.forceShowingEditorBarSince",
+			"framer.showEditorBar"
+		]
+
+		function clearEditorFlags() {
+			for (const key of editorKeys) {
+				try { localStorage.removeItem(key) } catch (_) {}
+				try { sessionStorage.removeItem(key) } catch (_) {}
+			}
+		}
+
+		function markerText(element) {
+			return [
+				element.id,
+				typeof element.className === "string" ? element.className : "",
+				element.getAttribute("aria-label"),
+				element.getAttribute("title"),
+				element.getAttribute("href"),
+				element.textContent
+			].filter(Boolean).join(" ")
+		}
+
+		function isFloatingEditorControl(element) {
+			if (!(element instanceof HTMLElement) || element.closest("#main")) return false
+
+			const marker = markerText(element)
+			if (/edit content|framer.*editor|framer.*project|framer\.com\/(projects|sites|editor)/i.test(marker)) {
+				return true
+			}
+
+			const rect = element.getBoundingClientRect()
+			const style = getComputedStyle(element)
+			const zIndex = Number.parseInt(style.zIndex, 10) || 0
+			const isFixed = style.position === "fixed" || style.position === "sticky"
+			const isRoundButton = Math.abs(rect.width - rect.height) <= 12 && rect.width >= 36 && rect.width <= 96
+			const isSideControl = rect.left > window.innerWidth - 160 || rect.right > window.innerWidth - 40
+			const hasIcon = Boolean(element.querySelector("svg"))
+
+			return isFixed && isRoundButton && isSideControl && hasIcon && zIndex >= 100
+		}
+
+		function removeMakerChrome(root = document) {
+			clearEditorFlags()
+			const candidates = root === document ? document.querySelectorAll("body *") : root.querySelectorAll?.("*") || []
+			for (const element of candidates) {
+				if (isFloatingEditorControl(element)) element.remove()
+			}
+		}
+
+		clearEditorFlags()
+		document.addEventListener("DOMContentLoaded", () => removeMakerChrome())
+		window.addEventListener("load", () => removeMakerChrome())
+		new MutationObserver((mutations) => {
+			for (const mutation of mutations) {
+				for (const node of mutation.addedNodes) {
+					if (node instanceof HTMLElement) {
+						if (isFloatingEditorControl(node)) node.remove()
+						else removeMakerChrome(node)
+					}
+				}
+			}
+		}).observe(document.documentElement, { childList: true, subtree: true })
+	})()
+	</script>
 	<!-- Start of headStart -->
     <!-- Snippet: legacy-headStart -->
 <style>
@@ -25,15 +104,11 @@
 </style>
 <!-- SnippetEnd: legacy-headStart -->
 
-    <!-- End of headStart -->
-	<meta name="viewport" content="width=device-width">
-	<meta name="generator" content="Framer 7affe85">
-	<title>Emiel Janson</title>
-    <meta name="description" content="I’m a software designer from the Netherlands. Currently, I work at Linear, helping companies build better software. ">
-    <meta name="framer-search-index" content="https://framerusercontent.com/sites/dAV0zhFYrkjP7aON9t0gR/searchIndex-CLM8bXt4wXmk.json">
-    <meta name="framer-search-index-fallback" content="https://framerusercontent.com/sites/dAV0zhFYrkjP7aON9t0gR/searchIndex-9b9lxWxwPGc0.json">
-    <meta name="framer-html-plugin" content="disable">
-    <link href="assets/Wu0apeaR0Jughhrq2tmTiTnT4-dc4ce03cf8fb.png" rel="icon" media="(prefers-color-scheme: light)">
+	    <!-- End of headStart -->
+		<meta name="viewport" content="width=device-width">
+		<title>Emiel Janson</title>
+	    <meta name="description" content="I’m a software designer from the Netherlands. Currently, I work at Linear, helping companies build better software. ">
+	    <link href="assets/Wu0apeaR0Jughhrq2tmTiTnT4-dc4ce03cf8fb.png" rel="icon" media="(prefers-color-scheme: light)">
     <link href="assets/Wu0apeaR0Jughhrq2tmTiTnT4-dc4ce03cf8fb.png" rel="icon" media="(prefers-color-scheme: dark)">
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
